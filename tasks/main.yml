@@ -1,0 +1,23 @@
+---
+- name: Install the latest version of git, python3-pip, ansible-core, vim, and jq
+  ansible.builtin.dnf:
+    name:
+      - git
+      - python3-pip
+      - ansible-core
+      - vim
+      - jq
+    state: latest
+
+- name: Clone the repo and copy lab script
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - git clone https://github.com/opentraining-labs-customizations/rh1-lab17-ocpvirt.git /opt/rh1-lab17-ocpvirt/
+    - sudo cp /opt/rh1-lab17-ocpvirt/lab /usr/local/bin
+    - chmod +x /usr/local/bin/lab
+
+- name: Install the ansible-galaxy collection
+  ansible.builtin.command: "ansible-galaxy collection install -r /opt/rh1-lab17-ocpvirt/requirements.yml -p /usr/share/ansible/collections/"
+
+- name: Install the kubernetes and passlib
+  ansible.builtin.command: "pip install kubernetes passlib"
