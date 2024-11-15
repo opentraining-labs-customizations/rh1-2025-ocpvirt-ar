@@ -13,7 +13,7 @@
   ansible.builtin.command: "{{ item }}"
   loop:
     - sudo git clone https://github.com/opentraining-labs-customizations/rh1-lab17-ocpvirt.git /opt/rh1-lab17-ocpvirt/
-    - sudo cp /opt/rh1-lab17-ocpvirt/lab /usr/local/bin
+    - sudo cp /opt/rh1-lab17-ocpvirt/lab /usr/local/bin/
     - sudo chmod +x /usr/local/bin/lab
 
 - name: Install the ansible-galaxy collection
@@ -25,9 +25,9 @@
 - name: Generate hashed password
   ansible.builtin.command:
     cmd: "openssl passwd -6 {{ common_password }}"
-    register: hashed_password
-    delegate_to: localhost
-    run_once: true
+  register: hashed_password
+  delegate_to: localhost
+  run_once: true
       
 - name: Create the users on bastion
   ansible.builtin.user: 
