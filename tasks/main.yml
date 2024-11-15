@@ -21,3 +21,18 @@
 
 - name: Install the kubernetes and passlib
   ansible.builtin.command: "pip install kubernetes passlib"
+
+- name: Generate hashed password
+  ansible.builtin.command:
+    cmd: "openssl passwd -6 {{ common_password }}"
+    register: hashed_password
+    delegate_to: localhost
+    run_once: true
+      
+- name: Create the users on bastion
+  ansible.builtin.user: 
+    name: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
+    state: present
+    shell: /bin/bash
+    password: "{{ hashed_password }}"
+  loop: "{{ range(1, num_users + 1) | list }}"
