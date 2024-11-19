@@ -42,7 +42,7 @@
     cmd: oc login -u {openshift_cluster_admin_username} -p {openshift_cluster_admin_password} {openshift_api_url}
   register: login_result
 
-- name: Executing lab prerequesites on cluster
+- name: Executing lab prerequisites on cluster
   ansible.builtin.command:
     cmd: sudo ansible-playbook /opt/rh1-lab17-ocpvirt/admin-configure-environment.yaml
   register: admin_playbook_result
