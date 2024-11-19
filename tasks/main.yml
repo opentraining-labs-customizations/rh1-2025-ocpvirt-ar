@@ -28,11 +28,21 @@
 #  register: hashed_password
 #  delegate_to: localhost
 #  run_once: true
-      
+
 - name: Create the users on bastion
-  ansible.builtin.user: 
+  ansible.builtin.user:
     name: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
     state: present
     shell: /bin/bash
     password: "{{ common_password | password_hash }}"
   loop: "{{ range(1, num_users + 1) | list }}"
+
+- name: Authenticate on OpenShift cluster
+  ansible.builtin.command:
+    cmd: oc login -u {openshift_cluster_admin_username} -p {openshift_cluster_admin_password} {openshift_api_url}
+  register: login_result
+
+- name: Executing lab prerequesites on cluster
+  ansible.builtin.command:
+    cmd: sudo ansible-playbook /opt/rh1-lab17-ocpvirt/admin-configure-environment.yaml
+  register: admin_playbook_result
