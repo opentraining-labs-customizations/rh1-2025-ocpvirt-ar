@@ -44,5 +44,5 @@
 
 - name: Executing lab prerequisites on cluster
   ansible.builtin.command:
-    cmd: sudo ansible-playbook /opt/rh1-lab17-ocpvirt/admin-configure-environment.yaml
+    cmd: "ansible-playbook -e num_users={{ num_users }} /opt/rh1-lab17-ocpvirt/admin-configure-environment.yaml"
   register: admin_playbook_result
