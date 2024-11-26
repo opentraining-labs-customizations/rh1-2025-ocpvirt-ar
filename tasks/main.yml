@@ -39,10 +39,12 @@
 
 - name: OpenShift Access Data
   agnosticd_user_info:
+  vars:
+    _bastion_inventory_name: "{{ groups['bastions'][0] }}"
     user: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
     data:
-      bastion_public_hostname: "{{ bastion_public_hostname }}"
-      bastion_ssh_port: "{{ bastion_ssh_port }}"
+      bastion_public_hostname: "{{ _bastion_public_hostname }}"
+      bastion_ssh_port: "{{ hostvars[groups['bastions'][0]].bastion_ssh_port }}"
       bastion_ssh_password: "{{ common_password }}"
       openshift_api_url: "{{ openshift_api_url }}"
   loop: "{{ range(1, num_users + 1) | list }}"
