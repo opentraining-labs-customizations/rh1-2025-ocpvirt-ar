@@ -48,6 +48,10 @@
       bastion_ssh_password: "{{ common_password }}"
       openshift_api_url: "{{ openshift_api_url }}"
   loop: "{{ range(1, num_users + 1) | list }}"
+
+- name: Deploy Showroom
+  ansible.builtin.include_role:
+    name: ocp4_workload_showroom
   
 - name: Authenticate on OpenShift cluster
   ansible.builtin.command:
