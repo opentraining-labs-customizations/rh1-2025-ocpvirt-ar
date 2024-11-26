@@ -37,16 +37,6 @@
     password: "{{ common_password | password_hash }}"
   loop: "{{ range(1, num_users + 1) | list }}"
 
-- name: Authenticate on OpenShift cluster
-  ansible.builtin.command:
-    cmd: "oc login -u {{ openshift_cluster_admin_username }} -p {{ openshift_cluster_admin_password }} {{ openshift_api_url }}"
-  register: login_result
-
-- name: Executing lab prerequisites on cluster
-  ansible.builtin.command:
-    cmd: "ansible-playbook -e num_users={{ num_users }} /opt/rh1-lab17-ocpvirt/admin-configure-environment.yaml"
-  register: admin_playbook_result
-
 - name: OpenShift Access Data
   agnosticd_user_info:
     user: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
@@ -56,3 +46,13 @@
       bastion_ssh_password: "{{ common_password }}"
       openshift_api_url: "{{ openshift_api_url }}"
   loop: "{{ range(1, num_users + 1) | list }}"
+  
+- name: Authenticate on OpenShift cluster
+  ansible.builtin.command:
+    cmd: "oc login -u {{ openshift_cluster_admin_username }} -p {{ openshift_cluster_admin_password }} {{ openshift_api_url }}"
+  register: login_result
+
+- name: Executing lab prerequisites on cluster
+  ansible.builtin.command:
+    cmd: "ansible-playbook -e num_users={{ num_users }} /opt/rh1-lab17-ocpvirt/admin-configure-environment.yaml"
+  register: admin_playbook_result
