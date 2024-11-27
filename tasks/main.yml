@@ -38,9 +38,9 @@
   loop: "{{ range(1, num_users + 1) | list }}"
 
 - name: OpenShift Access Data
-  agnosticd_user_info:
   vars:
     _bastion_inventory_name: "{{ groups['bastions'][0] }}"
+  agnosticd_user_info:
     user: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
     data:
       bastion_public_hostname: "{{ _bastion_public_hostname }}"
