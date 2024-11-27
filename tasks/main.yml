@@ -37,6 +37,11 @@
     password: "{{ common_password | password_hash }}"
   loop: "{{ range(1, num_users + 1) | list }}"
 
+- name: Setting facts so that they will be persisted in the fact cache
+  ansible.builtin.set_fact:
+    ocp4_base_domain: "{{ osp_cluster_dns_zone }}"
+    cacheable: yes
+    
 - name: OpenShift Access Data
   vars:
     _bastion_inventory_name: "{{ groups['bastions'][0] }}"
