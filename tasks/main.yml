@@ -43,7 +43,7 @@
   agnosticd_user_info:
     user: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
     data:
-      bastion_public_hostname: "{{ hostvars[_bastion_inventory_name].shortname }}.{{ guid }}.{{ subdomain_base_suffix }}"
+      bastion_public_hostname: "{{ bastion_public_hostname }}"
       bastion_ssh_port: "{{ hostvars[groups['bastions'][0]].bastion_ssh_port }}"
       bastion_ssh_password: "{{ common_password }}"
       #openshift_api_url: "{{ openshift_api_url }}"
