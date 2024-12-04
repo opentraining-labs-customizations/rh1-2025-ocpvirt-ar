@@ -61,7 +61,7 @@
   agnosticd_user_info:
     user: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
     data:
-      bastion_public_hostname: "{{ bastion.{{ guid }}.{{ ocp4_base_domain }}. }}"
+      bastion_public_hostname: "bastion.{{ guid }}.{{ ocp4_base_domain }}."
       bastion_ssh_password: "{{ common_password }}"
   loop: "{{ range(1, num_users + 1) | list }}"
 
