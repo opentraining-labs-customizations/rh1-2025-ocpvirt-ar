@@ -22,13 +22,6 @@
 - name: Install the kubernetes and passlib
   ansible.builtin.command: "pip install kubernetes passlib"
 
-#- name: Generate hashed password
-#  ansible.builtin.command:
-#    cmd: "openssl passwd -6 {{ common_password }}"
-#  register: hashed_password
-#  delegate_to: localhost
-#  run_once: true
-
 - name: Create the users on bastion
   ansible.builtin.user:
     name: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
@@ -38,11 +31,13 @@
   loop: "{{ range(1, num_users + 1) | list }}"
     
 - name: Setting facts so that they will be persisted in the fact cache
+  when: cloud_provider == 'openshift_cnv'
   ansible.builtin.set_fact:
     ocp4_base_domain: "{{ cluster_dns_zone }}"
     cacheable: yes
     
 - name: OpenShift Access Data
+  when: cloud_provider == 'openshift_cnv'
   vars:
     _bastion_inventory_name: "{{ groups['bastions'][0] }}"
   agnosticd_user_info:
@@ -51,7 +46,23 @@
       bastion_public_hostname: "{{ openshift_cnv_ssh_address }}"
       bastion_ssh_port: "{{ hostvars[groups['bastions'][0]].bastion_ssh_port }}"
       bastion_ssh_password: "{{ common_password }}"
-      #openshift_api_url: "{{ openshift_api_url }}"
+  loop: "{{ range(1, num_users + 1) | list }}"
+
+- name: Setting facts so that they will be persisted in the fact cache
+  when: cloud_provider == 'gcp'
+  ansible.builtin.set_fact:
+    ocp4_base_domain: "{{ guid }}.{{ cluster_dns_zone }}"
+    cacheable: yes
+    
+- name: OpenShift Access Data
+  when: cloud_provider == 'gcp'
+  vars:
+    _bastion_inventory_name: "{{ groups['bastions'][0] }}"
+  agnosticd_user_info:
+    user: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
+    data:
+      bastion_public_hostname: "{{ bastion.{{ guid }}.{{ ocp4_base_domain }}. }}"
+      bastion_ssh_password: "{{ common_password }}"
   loop: "{{ range(1, num_users + 1) | list }}"
 
 - name: Deploy Showroom
