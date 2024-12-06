@@ -75,6 +75,13 @@
   register: login_result
 
 - name: Executing lab prerequisites on cluster
+  when: cloud_provider == 'openshift_cnv'
   ansible.builtin.command:
     cmd: "ansible-playbook -e num_users={{ num_users }} /opt/rh1-lab17-ocpvirt/admin-configure-environment.yaml"
+  register: admin_playbook_result
+
+- name: Executing lab prerequisites on cluster
+  when: cloud_provider == 'gcp'
+  ansible.builtin.command:
+    cmd: "ansible-playbook -e num_users={{ num_users }} -e nmstate_cfg=true /opt/rh1-lab17-ocpvirt/admin-configure-environment.yaml"
   register: admin_playbook_result
