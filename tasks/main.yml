@@ -46,6 +46,7 @@
       bastion_public_hostname: "{{ openshift_cnv_ssh_address }}"
       bastion_ssh_port: "{{ hostvars[groups['bastions'][0]].bastion_ssh_port }}"
       bastion_ssh_password: "{{ common_password }}"
+      login_command: "oc login --insecure-skip-tls-verify=true -u {{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }} -p {{ _ocp4_workload_authentication_htpasswd_user_passwords[item] }} {{ openshift_api_url }}"
   loop: "{{ range(1, num_users + 1) | list }}"
 
 - name: Setting facts so that they will be persisted in the fact cache
@@ -63,6 +64,7 @@
     data:
       bastion_public_hostname: "bastion.{{ guid }}.{{ ocp4_base_domain }}."
       bastion_ssh_password: "{{ common_password }}"
+      login_command: "oc login --insecure-skip-tls-verify=true -u {{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }} -p {{ _ocp4_workload_authentication_htpasswd_user_passwords[item] }} {{ openshift_api_url }}"
   loop: "{{ range(1, num_users + 1) | list }}"
 
 - name: Deploy Showroom
@@ -85,3 +87,4 @@
   ansible.builtin.command:
     cmd: "ansible-playbook -e num_users={{ num_users }} -e nmstate_cfg=true /opt/rh1-lab17-ocpvirt/admin-configure-environment.yaml"
   register: admin_playbook_result
+  
