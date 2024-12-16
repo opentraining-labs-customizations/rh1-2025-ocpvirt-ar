@@ -47,7 +47,7 @@
       bastion_ssh_port: "{{ hostvars[groups['bastions'][0]].bastion_ssh_port }}"
       bastion_ssh_password: "{{ common_password }}"
       login_command: "oc login --insecure-skip-tls-verify=true -u {{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }} -p {{ _ocp4_workload_authentication_htpasswd_user_passwords[item] }} {{ openshift_api_url }}"
-  loop: "{{ range(1, num_users) | list }}"
+  loop: "{{ range(1, num_users + 1) | list }}"
 
 - name: Setting facts so that they will be persisted in the fact cache
   when: cloud_provider == 'gcp'
@@ -65,7 +65,7 @@
       bastion_public_hostname: "bastion.{{ guid }}.{{ ocp4_base_domain }}."
       bastion_ssh_password: "{{ common_password }}"
       login_command: "oc login --insecure-skip-tls-verify=true -u {{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }} -p {{ _ocp4_workload_authentication_htpasswd_user_passwords[item] }} {{ openshift_api_url }}"
-  loop: "{{ range(1, num_users) | list }}"
+  loop: "{{ range(1, num_users + 1) | list }}"
 
 - name: Deploy Showroom
   ansible.builtin.include_role:
