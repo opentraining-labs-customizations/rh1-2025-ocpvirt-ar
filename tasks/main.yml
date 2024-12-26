@@ -45,8 +45,10 @@
     data:
       bastion_public_hostname: "{{ openshift_cnv_ssh_address }}"
       bastion_ssh_port: "{{ hostvars[groups['bastions'][0]].bastion_ssh_port }}"
+      bastion_ssh_user_name: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
       bastion_ssh_password: "{{ common_password }}"
       cloud_provider: "{{ cloud_provider }}"
+      openshift_api_url: "{{ openshift_api_url }}"
   loop: "{{ range(1, num_users + 1) | list }}"
 
 - name: Setting facts so that they will be persisted in the fact cache
@@ -63,8 +65,10 @@
     user: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
     data:
       bastion_public_hostname: "bastion.{{ guid }}.{{ ocp4_base_domain }}."
+      bastion_ssh_user_name: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
       bastion_ssh_password: "{{ common_password }}"
       cloud_provider: "{{ cloud_provider }}"
+      openshift_api_url: "{{ openshift_api_url }}"
   loop: "{{ range(1, num_users + 1) | list }}"
 
 - name: Deploy Showroom
@@ -76,11 +80,11 @@
     cmd: "oc login -u {{ openshift_cluster_admin_username }} -p {{ openshift_cluster_admin_password }} {{ openshift_api_url }}"
   register: login_result
 
-#- name: Executing lab prerequisites on cluster
-#  when: cloud_provider == 'openshift_cnv'
-#  ansible.builtin.command:
-#    cmd: "ansible-playbook -e num_users={{ num_users }} /opt/rh1-lab17-ocpvirt/admin-configure-environment.yaml"
-#  register: admin_playbook_result
+- name: Executing lab prerequisites on cluster
+  when: cloud_provider == 'openshift_cnv'
+  ansible.builtin.command:
+    cmd: "ansible-playbook -e num_users={{ num_users }} /opt/rh1-lab17-ocpvirt/admin-configure-environment.yaml"
+  register: admin_playbook_result
 
 - name: Executing lab prerequisites on cluster
   when: cloud_provider == 'gcp'
