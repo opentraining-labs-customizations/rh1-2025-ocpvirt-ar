@@ -27,7 +27,7 @@
     name: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
     state: present
     shell: /bin/bash
-    password: "{{ common_password | password_hash }}"
+    password: "{{ common_user_password | password_hash }}"
   loop: "{{ range(1, num_users + 1) | list }}"
     
 - name: Setting facts so that they will be persisted in the fact cache
@@ -46,7 +46,7 @@
       bastion_public_hostname: "{{ openshift_cnv_ssh_address }}"
       bastion_ssh_port: "{{ hostvars[groups['bastions'][0]].bastion_ssh_port }}"
       bastion_ssh_user_name: "{{ ocp4_workload_authentication_htpasswd_user_base }}{{ item }}"
-      bastion_ssh_password: "{{ common_password }}"
+      bastion_ssh_password: "{{ common_user_password }}"
       cloud_provider: "{{ cloud_provider }}"
       openshift_api_url: "{{ openshift_api_url }}"
   loop: "{{ range(1, num_users + 1) | list }}"
